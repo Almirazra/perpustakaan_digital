@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class KategoriModel extends Model
 {
-    protected $table = 'kategorisgi';
+    protected $table = 'kategoris';
     protected $fillable = ['nama_kategori', 'keterangan'];
 
     public function bukus(): HasMany
