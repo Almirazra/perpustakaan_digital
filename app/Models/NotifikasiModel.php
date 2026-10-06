@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Notifikasi extends Model
+class NotifikasiModel extends Model
 {
     protected $table = 'notifikasis';
     protected $fillable = ['siswa_id', 'judul', 'pesan', 'status'];
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id');
+        return $this->belongsTo(SiswaModel::class, 'siswa_id');
     }
 
     // kirim()
