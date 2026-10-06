@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Pengembalian extends Model
+class PengembalianModel extends Model
 {
     protected $table = 'pengembalians';
     protected $fillable = [
@@ -17,12 +17,12 @@ class Pengembalian extends Model
 
     public function peminjaman(): BelongsTo
     {
-        return $this->belongsTo(Peminjaman::class, 'peminjaman_id');
+        return $this->belongsTo(PeminjamanModel::class, 'peminjaman_id');
     }
 
     // dinamai dendaDetail agar tidak bentrok dengan kolom `denda`
     public function dendaDetail(): HasOne
     {
-        return $this->hasOne(Denda::class, 'pengembalian_id');
+        return $this->hasOne(DendaModel::class, 'pengembalian_id');
     }
 }

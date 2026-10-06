@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Buku extends Model
+class BukuModel extends Model
 {
     protected $table = 'bukus';
     protected $fillable = [
@@ -16,11 +16,11 @@ class Buku extends Model
 
     public function kategori(): BelongsTo
     {
-        return $this->belongsTo(Kategori::class, 'kategori_id');
+        return $this->belongsTo(KategoriModel::class, 'kategori_id');
     }
 
     public function peminjamans(): HasMany
     {
-        return $this->hasMany(Peminjaman::class, 'buku_id');
+        return $this->hasMany(PeminjamanModel::class, 'buku_id');
     }
 }

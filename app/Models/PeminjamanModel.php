@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Peminjaman extends Model
+class PeminjamanModel extends Model
 {
     protected $table = 'peminjamans';
     protected $fillable = [
         'siswa_id', 'buku_id', 'tanggal_peminjaman',
         'tanggal_kembali', 'jumlah', 'status',
     ];
+
     protected $casts = [
         'tanggal_peminjaman' => 'date',
         'tanggal_kembali'    => 'date',
@@ -20,16 +21,16 @@ class Peminjaman extends Model
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id');
+        return $this->belongsTo(SiswaModel::class, 'siswa_id');
     }
 
     public function buku(): BelongsTo
     {
-        return $this->belongsTo(Buku::class, 'buku_id');
+        return $this->belongsTo(BukuModel::class, 'buku_id');
     }
 
     public function pengembalian(): HasOne
     {
-        return $this->hasOne(Pengembalian::class, 'peminjaman_id');
+        return $this->hasOne(PengembalianModel::class, 'peminjaman_id');
     }
 }
