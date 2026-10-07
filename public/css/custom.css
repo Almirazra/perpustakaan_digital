@@ -1,0 +1,115 @@
+/* ===== Palet warna ===== */
+:root {
+    --c-mist: #DEE6EE;
+    --c-fog:  #B2C1CF;
+    --c-slate:#74879A;
+    --c-ink:  #3E4A56;
+    --c-sand: #E6D2C2;
+
+    /* ganti warna "primary" bawaan Bootstrap */
+    --bs-primary: #3E4A56;
+    --bs-primary-rgb: 62, 74, 86;
+    --bs-link-color: #3E4A56;
+    --bs-link-hover-color: #74879A;
+}
+
+/* ===== Latar & teks ===== */
+body,
+#layoutSidenav_content { background-color: var(--c-mist); color: var(--c-ink); }
+.bg-light { background-color: var(--c-mist) !important; }          /* halaman login */
+footer.bg-light {
+    background-color: #fff !important;
+    border-top: 1px solid var(--c-fog);
+}
+
+/* ===== Navbar atas ===== */
+.sb-topnav.bg-dark { background-color: var(--c-ink) !important; }
+.sb-topnav .navbar-brand { color: var(--c-sand); }
+.sb-topnav #sidebarToggle { color: var(--c-sand); }
+.sb-topnav .nav-link { color: var(--c-fog); }
+.sb-topnav .nav-link:hover { color: var(--c-sand); }
+
+/* ===== Sidebar ===== */
+.sb-sidenav-dark { background-color: var(--c-ink); color: var(--c-fog); }
+.sb-sidenav-dark .sb-sidenav-menu .sb-sidenav-menu-heading { color: var(--c-fog); opacity: .75; }
+.sb-sidenav-dark .sb-sidenav-menu .nav-link { color: var(--c-mist); }
+.sb-sidenav-dark .sb-sidenav-menu .nav-link .sb-nav-link-icon { color: var(--c-fog); }
+.sb-sidenav-dark .sb-sidenav-menu .nav-link:hover { color: var(--c-sand); }
+.sb-sidenav-dark .sb-sidenav-menu .nav-link:hover .sb-nav-link-icon { color: var(--c-sand); }
+.sb-sidenav-dark .sb-sidenav-menu .nav-link.active {
+    color: var(--c-sand);
+    background-color: rgba(230, 210, 194, .12);
+    border-left: 3px solid var(--c-sand);
+}
+.sb-sidenav-dark .sb-sidenav-menu .nav-link.active .sb-nav-link-icon { color: var(--c-sand); }
+.sb-sidenav-dark .sb-sidenav-footer { background-color: rgba(0, 0, 0, .18); color: var(--c-mist); }
+
+/* ===== Kartu ===== */
+.card { border: 1px solid var(--c-fog); border-radius: .5rem; }
+.card-header {
+    background-color: var(--c-sand);
+    color: var(--c-ink);
+    font-weight: 600;
+    border-bottom: 1px solid var(--c-fog);
+}
+
+/* Kartu statistik dashboard */
+.bg-success { background-color: var(--c-slate) !important; }
+.bg-warning { background-color: var(--c-sand) !important; color: var(--c-ink) !important; }
+.bg-danger  { background-color: #A8584F !important; }   /* satu-satunya di luar palet, agar "denda" tetap terbaca sebagai peringatan */
+
+/* ===== Tombol ===== */
+.btn-primary {
+    --bs-btn-bg: var(--c-ink);
+    --bs-btn-border-color: var(--c-ink);
+    --bs-btn-hover-bg: #2F3943;
+    --bs-btn-hover-border-color: #2F3943;
+    --bs-btn-active-bg: #2F3943;
+    --bs-btn-active-border-color: #2F3943;
+    --bs-btn-disabled-bg: var(--c-slate);
+    --bs-btn-disabled-border-color: var(--c-slate);
+    --bs-btn-focus-shadow-rgb: 62, 74, 86;
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--c-ink);
+    --bs-btn-border-color: var(--c-ink);
+    --bs-btn-hover-bg: var(--c-ink);
+    --bs-btn-hover-border-color: var(--c-ink);
+    --bs-btn-active-bg: var(--c-ink);
+    --bs-btn-active-border-color: var(--c-ink);
+}
+.btn-secondary {
+    --bs-btn-bg: var(--c-slate);
+    --bs-btn-border-color: var(--c-slate);
+    --bs-btn-hover-bg: #667889;
+    --bs-btn-hover-border-color: #667889;
+    --bs-btn-active-bg: #667889;
+    --bs-btn-active-border-color: #667889;
+}
+
+/* ===== Form ===== */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--c-slate);
+    box-shadow: 0 0 0 .25rem rgba(116, 135, 154, .25);
+}
+.form-check-input:checked { background-color: var(--c-ink); border-color: var(--c-ink); }
+
+/* ===== Tabel ===== */
+.table {
+    --bs-table-hover-bg: rgba(178, 193, 207, .25);
+    --bs-table-striped-bg: rgba(178, 193, 207, .18);
+}
+.table > thead > tr > th {
+    background-color: var(--c-mist);
+    color: var(--c-ink);
+    border-bottom: 2px solid var(--c-fog);
+}
+
+/* ===== Lain-lain ===== */
+.breadcrumb { --bs-breadcrumb-bg: rgba(178, 193, 207, .45); padding: .6rem 1rem; border-radius: .5rem; }
+.alert-success {
+    --bs-alert-bg: var(--c-mist);
+    --bs-alert-border-color: var(--c-fog);
+    --bs-alert-color: var(--c-ink);
+}
