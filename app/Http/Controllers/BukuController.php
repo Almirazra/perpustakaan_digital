@@ -14,8 +14,8 @@ class BukuController extends Controller
     public function index()
     {
         $buku = BukuModel::with('kategori')->latest()->paginate(10);
-        $kategori = KategoriModel::all(); 
-        return view('buku.index', compact('buku', 'kategori'));
+        $kategori = KategoriModel::all();
+        return view('pages.buku.index', compact('buku', 'kategori'));
     }
 
     /**
@@ -25,7 +25,7 @@ class BukuController extends Controller
     {
         // Mengambil semua data kategori untuk pilihan dropdown
         $kategori = KategoriModel::all();
-        return view('buku.create', compact('kategori'));
+        return view('pages.buku.create', compact('kategori'));
     }
 
     /**
@@ -54,7 +54,7 @@ class BukuController extends Controller
     public function show(string $id)
     {
         $buku = BukuModel::with('kategori')->findOrFail($id);
-        return view('buku.show', compact('buku'));
+        return view('pages.buku.show', compact('buku'));
     }
 
     /**
@@ -64,8 +64,8 @@ class BukuController extends Controller
     {
         $buku = BukuModel::findOrFail($id);
         $kategori = KategoriModel::all();
-        
-        return view('buku.edit', compact('buku', 'kategori'));
+
+        return view('pages.buku.edit', compact('buku', 'kategori'));
     }
 
     /**

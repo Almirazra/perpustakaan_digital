@@ -13,12 +13,12 @@ class KategoriController extends Controller
     {
         $kategoris = Kategori::withCount('bukus')->orderBy('nama_kategori')->get();
 
-        return view('kategori.index', compact('kategoris'));
+        return view('pages.kategori.index', compact('kategoris'));
     }
 
     public function create()
     {
-        return view('kategori.create');
+        return view('pages.kategori.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -35,7 +35,7 @@ class KategoriController extends Controller
 
     public function edit(Kategori $kategori)
     {
-        return view('kategori.edit', compact('kategori'));
+        return view('pages.kategori.edit', compact('kategori'));
     }
 
     public function update(Request $request, Kategori $kategori): RedirectResponse
