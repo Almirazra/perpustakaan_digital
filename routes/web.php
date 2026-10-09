@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('kategori', KategoriController::class)->except(['show']);
 
     // Aktifkan satu per satu setelah controller web dan Blade-nya dibuat
-    // Route::resource('buku', BukuController::class)->except(['create', 'edit', 'show']);
+    Route::resource('buku', BukuController::class)->except(['create', 'edit', 'show']);
     // Route::resource('siswa', SiswaController::class)->except(['create', 'edit', 'show']);
     // Route::resource('peminjaman', PeminjamanController::class)->only(['index', 'store', 'update']);
     // Route::resource('pengembalian', PengembalianController::class)->only(['index', 'store', 'update']);
