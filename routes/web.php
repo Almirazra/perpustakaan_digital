@@ -34,6 +34,20 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::resource('denda', DendaController::class)->only(['index', 'update']);
     // Route::resource('notifikasi', NotifikasiController::class)->only(['index', 'destroy']);
     // Route::patch('notifikasi/{notifikasi}/dibaca', [NotifikasiController::class, 'tandaiDibaca'])->name('notifikasi.dibaca');
+
+    // Route Peminjaman (dilindungi middleware auth)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+    Route::put('/peminjaman/{id}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
+    Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+
+// Route Pengembalian
+Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
+Route::post('/pengembalian/{peminjaman_id}', [PengembalianController::class, 'store'])->name('pengembalian.store');
+Route::delete('/pengembalian/{id}', [PengembalianController::class, 'destroy'])->name('pengembalian.destroy');
+});
 });
 
 Auth::routes();
