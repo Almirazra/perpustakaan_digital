@@ -35,3 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::resource('notifikasi', NotifikasiController::class)->only(['index', 'destroy']);
     // Route::patch('notifikasi/{notifikasi}/dibaca', [NotifikasiController::class, 'tandaiDibaca'])->name('notifikasi.dibaca');
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
