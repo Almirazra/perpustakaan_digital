@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PeminjamanModel;
+use App\Models\PeminjamanModel as PeminjamanModel;
 use App\Models\SiswaModel;
 use App\Models\BukuModel;
 use Illuminate\Http\Request;
@@ -44,8 +44,8 @@ class PeminjamanController extends Controller
             'status' => 'dipinjam',
         ]);
 
-        // Perhatikan bagian route ini disamakan ke 'peminjamen.index'
-        return redirect()->route('peminjamen.index')->with('success', 'Data peminjaman berhasil ditambahkan.');
+        // Perhatikan bagian route ini disamakan ke 'peminjaman.index'
+        return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil ditambahkan.');
     }
 
     // Proses pengembalian buku (mengubah status menjadi dikembalikan)
@@ -65,7 +65,7 @@ class PeminjamanController extends Controller
         $peminjaman = PeminjamanModel::findOrFail($id);
         $peminjaman->delete();
 
-        // Perhatikan bagian route ini disamakan ke 'peminjamen.index'
-        return redirect()->route('peminjamen.index')->with('success', 'Data peminjaman berhasil dihapus.');
+        // Perhatikan bagian route ini disamakan ke 'peminjaman.index'
+        return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil dihapus.');
     }
 }

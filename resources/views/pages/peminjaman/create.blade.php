@@ -1,73 +1,104 @@
 @extends('layouts.app')
 
+@section('title', 'Tambah peminjaman')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Tambah Peminjaman Buku Baru</div>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Tambah peminjaman</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('peminjaman.index') }}">Peminjaman</a></li>
+        <li class="breadcrumb-item active">Tambah</li>
+    </ol>
 
-                <div class="card-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+    <div class="card mb-4">
+        <div class="card-header">Form peminjaman baru</div>
+        <div class="card-body">
+            <form action="{{ route('peminjaman.store') }}" method="POST">
+                @csrf
 
-                    <form action="{{ route('peminjamen.store') }}" method="POST">
-                        @csrf
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="siswa_id" class="form-label">Siswa</label>
+                        <select id="siswa_id" name="siswa_id" class="form-select @error('siswa_id') is-invalid @enderror" required>
+                            <option value="">Pilih siswa</option>
+                            @foreach ($siswas as $s)
+                                <option value="{{ $s->id }}" @selected(old('siswa_id') == $s->id)>
+                                    {{ $s->nama_lengkap }} ({{ $s->nis }}) - {{ $s->kelas }} {{ $s->jurusan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('siswa_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="siswa_id" class="form-label">Nama Siswa</label>
-                            <select name="siswa_id" id="siswa_id" class="form-control @error('siswa_id') is-invalid @enderror" required>
-                                <option value="">-- Pilih Siswa --</option>
-                                @foreach($siswas as $siswa)
-                                    <option value="{{ $siswa->id }}" {{ old('siswa_id') == $siswa->id ? 'selected' : '' }}>
-                                        {{ $siswa->nama }} ({{ $siswa->nis ?? '-' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="buku_id" class="form-label">Judul Buku</label>
-                            <select name="buku_id" id="buku_id" class="form-control @error('buku_id') is-invalid @enderror" required>
-                                <option value="">-- Pilih Buku --</option>
-                                @foreach($bukus as $buku)
-                                    <option value="{{ $buku->id }}" {{ old('buku_id') == $buku->id ? 'selected' : '' }}>
-                                        {{ $buku->judulpeminjaman ?? $buku->judul ?? '-' }} (Stok: {{ $buku->stok ?? '-' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tanggal_peminjaman" class="form-label">Tanggal Peminjaman</label>
-                            <input type="date" name="tanggal_peminjaman" id="tanggal_peminjaman" class="form-control @error('tanggal_peminjaman') is-invalid @enderror" value="{{ old('tanggal_peminjaman', date('Y-m-d')) }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tanggal_kembali" class="form-label">Tanggal Jatuh Tempo (Pengembalian)</label>
-                            <input type="date" name="tanggal_kembali" id="tanggal_kembali" class="form-control @error('tanggal_kembali') is-invalid @enderror" value="{{ old('tanggal_kembali', date('Y-m-d', strtotime('+7 days'))) }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="jumlah" class="form-label">Jumlah Buku</label>
-                            <input type="number" name="jumlah" id="jumlah" class="form-control @error('jumlah') is-invalid @enderror" value="{{ old('jumlah', 1) }}" min="1" required>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('peminjamen.index') }}" class="btn btn-secondary">Kembali</a>
-                            <button type="submit" class="btn btn-primary">Simpan Peminjaman</button>
-                        </div>
-                    </form>
+                    <div class="col-md-6 mb-3">
+                        <label for="buku_id" class="form-label">Buku</label>
+                        <select id="buku_id" name="buku_id" class="form-select @error('buku_id') is-invalid @enderror" required>
+                            <option value="">Pilih buku</option>
+                            @foreach ($bukus as $b)
+                                <option value="{{ $b->id }}" data-stok="{{ $b->stok }}" @selected(old('buku_id') == $b->id)>
+                                    {{ $b->judul }} (stok {{ $b->stok }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('buku_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
-            </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="tanggal_peminjaman" class="form-label">Tanggal pinjam</label>
+                        <input type="date" id="tanggal_peminjaman" name="tanggal_peminjaman"
+                               value="{{ old('tanggal_peminjaman', today()->toDateString()) }}"
+                               class="form-control @error('tanggal_peminjaman') is-invalid @enderror" required>
+                        @error('tanggal_peminjaman')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="tanggal_kembali" class="form-label">Jatuh tempo</label>
+                        <input type="date" id="tanggal_kembali" name="tanggal_kembali"
+                               value="{{ old('tanggal_kembali', today()->addDays(7)->toDateString()) }}"
+                               class="form-control @error('tanggal_kembali') is-invalid @enderror" required>
+                        @error('tanggal_kembali')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="jumlah" class="form-label">Jumlah</label>
+                        <input type="number" id="jumlah" name="jumlah" min="1" value="{{ old('jumlah', 1) }}"
+                               class="form-control @error('jumlah') is-invalid @enderror" required>
+                        @error('jumlah')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <a href="{{ route('peminjaman.index') }}" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
         </div>
     </div>
 </div>
 @endsection
+
+@push('script')
+<script>
+const pilihBuku = document.getElementById('buku_id');
+const inputJumlah = document.getElementById('jumlah');
+
+pilihBuku.addEventListener('change', () => {
+    const stok = pilihBuku.selectedOptions[0]?.dataset.stok;
+    inputJumlah.max = stok || '';
+    if (stok && Number(inputJumlah.value) > Number(stok)) {
+        inputJumlah.value = stok;
+    }
+});
+</script>
+@endpush

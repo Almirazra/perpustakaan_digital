@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PeminjamanModel;
-use App\Models\PengembalianModel;
+use App\Models\PeminjamanModel as PeminjamanModel;
+use App\Models\PengembalianModel as PengembalianModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -37,9 +37,9 @@ class PengembalianController extends Controller
         // Cek apakah terlambat (jika tanggal pengembalian > tanggal jatuh tempo)
         if ($tanggalPengembalian->greaterThan($tanggalJatuhTempo)) {
             $keterlambatan = $tanggalJatuhTempo->diffInDays($tanggalPengembalian);
-            
+
             // Contoh tarif denda: Rp 1.000 per hari keterlambatan (bisa disesuaikan aturan perpustakaanmu)
-            $tarifDendaPerHari = 1000; 
+            $tarifDendaPerHari = 1000;
             $denda = $keterlambatan * $tarifDendaPerHari;
             $status = 'terlambat';
         }
@@ -65,7 +65,7 @@ class PengembalianController extends Controller
     public function destroy($id)
     {
         $pengembalian = PengembalianModel::findOrFail($id);
-        
+
         // Kembalikan status peminjamannya ke 'dipinjam' jika riwayat pengembalian dihapus
         $pengembalian->peminjaman->update([
             'status' => 'dipinjam'

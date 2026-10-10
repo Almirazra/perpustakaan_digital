@@ -43,9 +43,13 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-coins"></i></div>
                 Denda
             </a>
-            <a class="nav-link {{ request()->is('notifikasi*') ? 'active' : '' }}" href="{{ url('/notifikasi') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-bell"></i></div>
-                Notifikasi
+            @php $belumDibaca = \App\Models\NotifikasiModel::where('status', 'belum_dibaca')->count(); @endphp
+            <a class="nav-link {{ request()->is('notifikasi*') ? 'active' : '' }}" href="{{ route('notifikasi.index') }}">
+            <div class="sb-nav-link-icon"><i class="fas fa-bell"></i></div>
+            Notifikasi
+            @if ($belumDibaca > 0)
+            <span class="badge bg-danger ms-auto">{{ $belumDibaca }}</span>
+            @endif
             </a>
 
         </div>
