@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SiswaModel extends Model
 {
     protected $table = 'siswas';
-    protected $fillable = ['nis', 'nama_lengkap', 'kelas', 'jurusan', 'telp'];
+    protected $fillable = ['nis', 'nama_lengkap', 'kelas', 'jurusan', 'telp', 'role', 'password'];
 
     public function peminjamans(): HasMany
     {

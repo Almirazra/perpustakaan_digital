@@ -10,17 +10,22 @@ use App\Http\Controllers\DendaController;
 use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RegisterController;
 
 Route::redirect('/', '/login');
 
 Auth::routes([
-    'register' => true,
+    'register' => false,
     'reset'    => false,
     'verify'   => false,
     'confirm'  => false,
 
 ]);
 
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+});
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
