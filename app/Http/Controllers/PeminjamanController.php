@@ -6,6 +6,7 @@ use App\Models\PeminjamanModel as PeminjamanModel;
 use App\Models\SiswaModel;
 use App\Models\BukuModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PeminjamanController extends Controller
 {
@@ -29,38 +30,36 @@ class PeminjamanController extends Controller
     {
         $request->validate([
             'siswa_id' => 'required',
-            'buku_id' => 'required',
-            'tanggal_peminjaman' => 'required|date',
-            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_peminjaman',
-            'jumlah' => 'required|integer|min:1',
+            'buku_id'  => 'required',
+            'jumlah'   => 'required|integer|min:1',
         ]);
 
+        $buku = BukuModel::findOrFail($request->buku_id);
+
+    if ($buku->stok < $request->jumlah) {
+        return back()->withInput()->with('error', 'Stok buku tidak cukup. Sisa: ' . $buku->stok);
+    }
+    DB::transaction(function () use ($request, $buku)  {
         PeminjamanModel::create([
             'siswa_id' => $request->siswa_id,
             'buku_id' => $request->buku_id,
-            'tanggal_peminjaman' => $request->tanggal_peminjaman,
-            'tanggal_kembali' => $request->tanggal_kembali,
+            'tanggal_peminjaman' => now(),
+            'tanggal_kembali' => now()->addDays(config('perpustakaan.durasi_pinjam_hari')), // default 7 hari
             'jumlah' => $request->jumlah,
             'status' => 'dipinjam',
         ]);
-
+        $buku->decrement('stok', $request->jumlah);
         // Perhatikan bagian route ini disamakan ke 'peminjaman.index'
+        });
+
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil ditambahkan.');
-    }
+        }
 
     // Proses pengembalian buku (mengubah status menjadi dikembalikan)
-    public function kembalikan($id)
-    {
-        $peminjaman = PeminjamanModel::findOrFail($id);
-        $peminjaman->update([
-            'status' => 'dikembalikan'
-        ]);
 
-        return redirect()->back()->with('success', 'Buku berhasil dikembalikan.');
-    }
 
     // Menghapus data peminjaman
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $peminjaman = PeminjamanModel::findOrFail($id);
         $peminjaman->delete();

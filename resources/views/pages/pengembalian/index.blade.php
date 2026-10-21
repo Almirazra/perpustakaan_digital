@@ -37,9 +37,9 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $p->siswa->nama_lengkap }}</td>
                             <td>{{ $p->buku->judul }}</td>
-                            <td>{{ $p->tanggal_peminjaman->format('d/m/Y') }}</td>
-                            <td>{{ $p->tanggal_kembali->format('d/m/Y') }}</td>
-                            <td>{{ $k->tanggal_pengembalian->format('d/m/Y') }}</td>
+                            <td>{{ $p->tanggal_peminjaman->format('d/m/Y H:i:s') }}</td>
+                            <td>{{ $p->tanggal_kembali->format('d/m/Y H:i:s') }}</td>
+                            <td>{{ $k->tanggal_pengembalian->format('d/m/Y H:i:s') }}</td>
                             <td>
                                 @if ($k->keterlambatan > 0)
                                     <span class="badge bg-danger">Terlambat {{ $k->keterlambatan }} hari</span>

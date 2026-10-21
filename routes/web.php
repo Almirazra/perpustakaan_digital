@@ -40,8 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('peminjaman', PeminjamanController::class)
         ->only(['index', 'create', 'store', 'destroy'])
         ->parameters(['peminjaman' => 'peminjaman']);
-    Route::put('peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])
-        ->name('peminjaman.kembalikan');
+
 
     // Aktifkan setelah controller web dan Blade-nya dibuat:
     Route::get('pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');

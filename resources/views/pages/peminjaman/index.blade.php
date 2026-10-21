@@ -38,8 +38,8 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $p->siswa->nama_lengkap }}</td>
                             <td>{{ $p->buku->judul }}</td>
-                            <td>{{ $p->tanggal_peminjaman->format('d/m/Y') }}</td>
-                            <td>{{ $p->tanggal_kembali->format('d/m/Y') }}</td>
+                            <td>{{ $p->tanggal_peminjaman->format('d/m/Y H:i:s') }}</td>
+                            <td>{{ $p->tanggal_kembali->format('d/m/Y H:i:s') }}</td>
                             <td>{{ $p->jumlah }}</td>
                             <td>
                                 @if ($p->status === 'dikembalikan')
@@ -51,13 +51,12 @@
                                 @endif
                             </td>
                             <td>
-                                @if ($p->status === 'dipinjam')
-                                    <form action="{{ route('peminjaman.kembalikan', $p) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-outline-primary btn-sm">Kembalikan</button>
-                                    </form>
-                                @else
+                                @if (in_array($p->status, ['dipinjam', 'terlambat']))
+                                    <form action="{{ route('pengembalian.store', $p->id) }}" method="POST" class="d-inline">
+                                 @csrf
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">Kembalikan</button>
+                                        </form>
+                                    @else
                                     <button type="button" class="btn btn-outline-danger btn-sm btn-hapus"
                                             data-url="{{ route('peminjaman.destroy', $p) }}"
                                             data-nama="{{ $p->siswa->nama_lengkap }}">

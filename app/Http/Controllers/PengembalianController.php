@@ -17,7 +17,7 @@ class PengembalianController extends Controller
     }
 
     // Memproses pengembalian buku dari data peminjaman
-    public function store(Request $request, $peminjaman_id)
+    public function store(Request $request, int $peminjaman_id)
     {
         $peminjaman = PeminjamanModel::findOrFail($peminjaman_id);
 
@@ -27,27 +27,27 @@ class PengembalianController extends Controller
         }
 
         // Tanggal pengembalian hari ini (atau dari request jika ada input khusus)
-        $tanggalPengembalian = Carbon::now();
-        $tanggalJatuhTempo = Carbon::parse($peminjaman->tanggal_kembali);
+      $tanggalPengembalian = Carbon::now();
+      $tanggalJatuhTempo = Carbon::parse($peminjaman->tanggal_kembali)->startOfDay();
 
-        $keterlambatan = 0;
-        $denda = 0;
-        $status = 'tepat_waktu';
+      $keterlambatan = 0;
+      $denda = 0;
 
-        // Cek apakah terlambat (jika tanggal pengembalian > tanggal jatuh tempo)
-        if ($tanggalPengembalian->greaterThan($tanggalJatuhTempo)) {
-            $keterlambatan = $tanggalJatuhTempo->diffInDays($tanggalPengembalian);
+      $status = 'tepat_waktu';
 
-            // Contoh tarif denda: Rp 1.000 per hari keterlambatan (bisa disesuaikan aturan perpustakaanmu)
-            $tarifDendaPerHari = 1000;
-            $denda = $keterlambatan * $tarifDendaPerHari;
-            $status = 'terlambat';
-        }
+// Bandingkan per tanggal (jam diabaikan)
+if ($tanggalPengembalian->copy()->startOfDay()->greaterThan($tanggalJatuhTempo)) {
+    $keterlambatan = (int) $tanggalJatuhTempo->diffInDays($tanggalPengembalian->copy()->startOfDay(), true);
 
+
+   // Denda = hari terlambat x tarif per hari (dari config)
+    $denda = $keterlambatan * config('perpustakaan.denda_per_hari');
+    $status = 'terlambat';
+}
         // Simpan data ke tabel pengembalians
         PengembalianModel::create([
             'peminjaman_id' => $peminjaman->id,
-            'tanggal_pengembalian' => $tanggalPengembalian->toDateString(),
+            'tanggal_pengembalian' => $tanggalPengembalian,
             'keterlambatan' => $keterlambatan,
             'denda' => $denda,
             'status' => $status,
@@ -56,21 +56,22 @@ class PengembalianController extends Controller
         // Update status di tabel peminjamans menjadi 'dikembalikan'
         $peminjaman->update([
             'status' => 'dikembalikan'
-        ]);
+            ]);
+            $peminjaman->buku?->increment('stok', $peminjaman->jumlah);
 
         return redirect()->route('pengembalian.index')->with('success', 'Buku berhasil dikembalikan. Keterlambatan: ' . $keterlambatan . ' hari, Denda: Rp ' . number_format($denda, 0, ',', '.'));
     }
 
     // Menghapus data riwayat pengembalian
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $pengembalian = PengembalianModel::findOrFail($id);
-
+        $peminjaman = $pengembalian->peminjaman;
         // Kembalikan status peminjamannya ke 'dipinjam' jika riwayat pengembalian dihapus
         $pengembalian->peminjaman->update([
             'status' => 'dipinjam'
         ]);
-
+        $peminjaman->buku?->decrement('stok', $peminjaman->jumlah);
         $pengembalian->delete();
 
         return redirect()->route('pengembalian.index')->with('success', 'Riwayat pengembalian berhasil dihapus.');

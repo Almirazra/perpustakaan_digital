@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
+
     private const Kelas = [
         'X', 'XI', 'XII',
     ];

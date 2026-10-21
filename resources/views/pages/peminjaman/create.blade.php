@@ -52,8 +52,8 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="tanggal_peminjaman" class="form-label">Tanggal pinjam</label>
-                        <input type="date" id="tanggal_peminjaman" name="tanggal_peminjaman"
-                               value="{{ old('tanggal_peminjaman', today()->toDateString()) }}"
+                        <input type="datetime-local" id="tanggal_peminjaman" name="tanggal_peminjaman"
+                               value="{{ old('tanggal_peminjaman', now()->format('Y-m-d H:i:s')) }}"
                                class="form-control @error('tanggal_peminjaman') is-invalid @enderror" required>
                         @error('tanggal_peminjaman')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -62,8 +62,8 @@
 
                     <div class="col-md-4 mb-3">
                         <label for="tanggal_kembali" class="form-label">Jatuh tempo</label>
-                        <input type="date" id="tanggal_kembali" name="tanggal_kembali"
-                               value="{{ old('tanggal_kembali', today()->addDays(7)->toDateString()) }}"
+                        <input type="datetime-local" id="tanggal_kembali" name="tanggal_kembali"
+                               value="{{ old('tanggal_kembali', today()->addDays(7)->format('Y-m-d H:i:s')) }}"
                                class="form-control @error('tanggal_kembali') is-invalid @enderror" required>
                         @error('tanggal_kembali')
                             <div class="invalid-feedback">{{ $message }}</div>
