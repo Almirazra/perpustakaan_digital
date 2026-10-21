@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+<<<<<<< Updated upstream
 @section('title', 'Dashboard')
 
 @section('content')
@@ -45,10 +46,44 @@
                     <div class="fs-2 fw-bold">Rp{{ number_format($dendaBelumBayar, 0, ',', '.') }}</div>
                 </div>
                 <div class="card-footer"><a class="small text-white stretched-link" href="{{ route('denda.index') }}">Lihat data</a></div>
+=======
+@section('title', 'Dashboard Siswa')
+
+@section('content')
+<div class="container-fluid px-4 py-3">
+    <!-- Judul Halaman -->
+    <h1 class="mt-2 mb-4">Dashboard Siswa</h1>
+
+    <!-- 3 Kartu Ringkasan Atas (Kondisi Awal Kosong / 0) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-dark rounded-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted small">Sedang Dipinjam</span>
+                    <h3 class="fw-bold mt-2 mb-0">{{ $totalDipinjam ?? '0' }} buku</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-dark rounded-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted small">Jatuh Tempo Terdekat</span>
+                    <h3 class="fw-bold mt-2 mb-0">{{ $jatuhTempoTerdekat ?? '-' }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-dark rounded-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted small">Total Denda</span>
+                    <h3 class="fw-bold mt-2 mb-0">Rp {{ number_format($totalDenda ?? 0, 0, ',', '.') }}</h3>
+                </div>
+>>>>>>> Stashed changes
             </div>
         </div>
     </div>
 
+<<<<<<< Updated upstream
         {{-- Baris 1: grafik + aktivitas terbaru (admin) --}}
     @php $admin = Auth::user()->role === 'admin'; @endphp
     <div class="row g-3 mb-4">
@@ -58,11 +93,53 @@
                 <div class="card-body">
                     <div style="position:relative;height:300px">
                         <canvas id="grafikBulanan"></canvas>
+=======
+    <!-- Bagian Bawah: Tabel Peminjaman Aktif & Notifikasi -->
+    <div class="row g-3">
+        <!-- Tabel Peminjaman Aktif (Kiri) -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border border-dark rounded-0 h-100">
+                <div class="card-header bg-white border-bottom border-dark py-3">
+                    <h5 class="fw-bold mb-0">Peminjaman Aktif</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0" style="border-color: #000;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Judul Buku</th>
+                                    <th>Tgl Pinjam</th>
+                                    <th>Jatuh Tempo</th>
+                                    <th>Status</th>
+                                    <th>Denda</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($peminjamanAktif ?? [] as $item)
+                                    <tr>
+                                        <td>{{ $item->buku->judul }}</td>
+                                        <td>{{ $item->tanggal_peminjaman->format('d M Y') }}</td>
+                                        <td>{{ $item->tanggal_kembali->format('d M Y') }}</td>
+                                        <td>{{ ucfirst($item->status) }}</td>
+                                        <td>Rp {{ number_format($item->denda ?? 0, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <!-- Tampilan jika siswa belum meminjam buku sama sekali -->
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            Belum ada buku yang sedang dipinjam. Yuk, pinjam buku di menu <strong>Buku</strong>!
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>
         </div>
 
+<<<<<<< Updated upstream
         @if ($admin)
             <div class="col-xl-4">
                 <div class="card h-100 d-flex flex-column">
@@ -149,10 +226,24 @@
                             @endforelse
                         </tbody>
                     </table>
+=======
+        <!-- Kolom Notifikasi (Kanan) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border border-dark rounded-0 h-100">
+                <div class="card-header bg-white border-bottom border-dark py-3">
+                    <h5 class="fw-bold mb-0">Notifikasi</h5>
+                </div>
+                <div class="card-body d-flex flex-column gap-3">
+                    <div class="border border-dark p-3 bg-light">
+                        <h6 class="fw-bold mb-1">Selamat Datang!</h6>
+                        <p class="mb-0 text-muted small">Akun siswa berhasil masuk. Silakan pilih menu Buku untuk mulai meminjam.</p>
+                    </div>
+>>>>>>> Stashed changes
                 </div>
             </div>
         </div>
     </div>
+<<<<<<< Updated upstream
 @endsection
 
 @push('script')
@@ -178,3 +269,7 @@ new Chart(document.getElementById('grafikBulanan'), {
 });
 </script>
 @endpush
+=======
+</div>
+@endsection
+>>>>>>> Stashed changes

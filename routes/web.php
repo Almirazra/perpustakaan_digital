@@ -19,13 +19,13 @@ Auth::routes([
     'reset'    => false,
     'verify'   => false,
     'confirm'  => false,
-
 ]);
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
 });
+
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -42,17 +42,23 @@ Route::middleware('auth')->group(function () {
         ->parameters(['peminjaman' => 'peminjaman']);
 
 
-    // Aktifkan setelah controller web dan Blade-nya dibuat:
     Route::get('pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
     Route::post('pengembalian/{peminjaman}/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
+    
     Route::resource('denda', DendaController::class)
-    ->only(['index', 'update'])
-    ->parameters(['denda' => 'denda']);
+        ->only(['index', 'update'])
+        ->parameters(['denda' => 'denda']);
+        
     Route::patch('notifikasi/dibaca-semua', [NotifikasiController::class, 'tandaiSemua'])->name('notifikasi.dibaca-semua');
     Route::patch('notifikasi/{notifikasi}/dibaca', [NotifikasiController::class, 'tandaiDibaca'])->name('notifikasi.dibaca');
     Route::resource('notifikasi', NotifikasiController::class)
-    ->only(['index', 'destroy'])
-    ->parameters(['notifikasi' => 'notifikasi']);
-    // Route::resource('notifikasi', NotifikasiController::class)->only(['index', 'destroy']);
-    // Route::patch('notifikasi/{notifikasi}/dibaca', [NotifikasiController::class, 'tandaiDibaca'])->name('notifikasi.dibaca');
+        ->only(['index', 'destroy'])
+        ->parameters(['notifikasi' => 'notifikasi']);
+
+    // Rute Siswa (Dashboard & Katalog Buku Siswa)
+    Route::get('/siswa/dashboard', function () {
+        return view('siswa.dashboard');
+    })->name('siswa.dashboard');
+
+    Route::get('/siswa/buku', [BukuController::class, 'katalogSiswa'])->name('siswa.buku.index');
 });

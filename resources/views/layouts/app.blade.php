@@ -26,7 +26,12 @@
 
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
-                @include('layouts.inc.sidebar')
+                {{-- Pengecekan Sidebar sesuai Peran User --}}
+                @if(Auth::user()->role === 'siswa') 
+                    @include('layouts.inc.sidebar_siswa')
+                @else
+                    @include('layouts.inc.sidebar')
+                @endif
             </div>
 
             <div id="layoutSidenav_content">

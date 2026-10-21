@@ -63,11 +63,8 @@ class RegisterController extends Controller
             // Simpan permanen ke database
             DB::commit();
 
-            // 3. Otomatis login
-            Auth::login($user);
-
-            // 4. Arahkan ke halaman beranda/dashboard
-            return redirect('/home')->with('success', 'Akun berhasil didaftarkan! Selamat datang.');
+            // 3. Ubah alur: Hapus auto-login dan arahkan kembali ke halaman login utama
+            return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login menggunakan NIS atau email dan password kamu.');
 
         } catch (\Exception $e) {
             // Batalkan semua perubahan jika terjadi error
