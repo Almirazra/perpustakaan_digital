@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('role', ['admin', 'petugas'])->default('petugas');
+            
+            // PERBAIKAN: Menambahkan 'siswa' ke dalam enum dan mengubah default menjadi 'siswa'
+            $table->enum('role', ['admin', 'petugas', 'siswa'])->default('siswa');
+            
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
