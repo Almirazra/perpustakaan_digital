@@ -7,7 +7,8 @@
             <h6 class="m-0 font-weight-bold text-primary">Tambah Data Buku</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('buku.store') }}" method="POST">
+            {{-- Tambahkan enctype di sini --}}
+            <form action="{{ route('buku.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="mb-3">
@@ -61,6 +62,14 @@
                         <input type="text" class="form-control @error('lokasi_rak') is-invalid @enderror" id="lokasi_rak" name="lokasi_rak" value="{{ old('lokasi_rak') }}">
                         @error('lokasi_rak') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cover" class="form-label">Cover Buku</label>
+                    <input type="file" name="cover" id="cover" class="form-control @error('cover') is-invalid @enderror">
+                    @error('cover')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="d-flex justify-content-end">

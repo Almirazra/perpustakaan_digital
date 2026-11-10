@@ -11,9 +11,18 @@ class BukuModel extends Model
 {
     use MencatatAktivitas;
     protected $table = 'bukus';
+    
+    // Menambahkan 'cover' ke dalam fillable agar bisa disimpan ke database
     protected $fillable = [
-        'kategori_id', 'judul', 'pengarang', 'penerbit',
-        'tahun_terbit', 'stok', 'lokasi_rak',
+        'kategori_id', 
+        'judul', 
+        'pengarang', 
+        'penerbit', 
+        'tahun_terbit', 
+        'stok', 
+        'lokasi_rak', 
+        'cover',
+        'sinopsis'
     ];
 
     public function kategori(): BelongsTo
@@ -25,12 +34,13 @@ class BukuModel extends Model
     {
         return $this->hasMany(PeminjamanModel::class, 'buku_id');
     }
-     public function deskripsiLog(string $aksi): ?string
+    
+    public function deskripsiLog(string $aksi): ?string
     {
         return match ($aksi) {
             'tambah' => "Buku \"{$this->judul}\" ditambahkan",
             'hapus'  => "Buku \"{$this->judul}\" dihapus",
             default  => null, // 'ubah' diabaikan karena stok berubah di setiap peminjaman
         };
-}
+    }
 }

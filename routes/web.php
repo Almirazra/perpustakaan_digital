@@ -11,6 +11,7 @@ use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\NotifikasiSiswaController;
 
 Route::redirect('/', '/login');
 
@@ -32,7 +33,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('kategori', KategoriController::class)->except(['show']);
     Route::resource('buku', BukuController::class);
 
-    // Route kartu harus di atas resource siswa, kalau tidak "kartu" dianggap ID siswa
+    // --- RUTE SISWA (DITARUH DI ATAS SEBELUM RESOURCE SISWA) ---
+    Route::get('/siswa/dashboard', function () {
+        return view('siswa.dashboard');
+    })->name('siswa.dashboard');
+
+    Route::get('/siswa/buku', [BukuController::class, 'katalogSiswa'])->name('siswa.buku.index');
+    Route::get('/siswa/notifikasi', [NotifikasiSiswaController::class, 'index'])->name('siswa.notifikasi.index');
+
+    // Rute kartu dan resource siswa di bawahnya
     Route::get('siswa/kartu', [SiswaController::class, 'kartuSemua'])->name('siswa.kartu.semua');
     Route::get('siswa/{siswa}/kartu', [SiswaController::class, 'kartu'])->name('siswa.kartu');
     Route::resource('siswa', SiswaController::class);
@@ -40,7 +49,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('peminjaman', PeminjamanController::class)
         ->only(['index', 'create', 'store', 'destroy'])
         ->parameters(['peminjaman' => 'peminjaman']);
-
 
     Route::get('pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
     Route::post('pengembalian/{peminjaman}/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
@@ -54,11 +62,4 @@ Route::middleware('auth')->group(function () {
     Route::resource('notifikasi', NotifikasiController::class)
         ->only(['index', 'destroy'])
         ->parameters(['notifikasi' => 'notifikasi']);
-
-    // Rute Siswa (Dashboard & Katalog Buku Siswa)
-    Route::get('/siswa/dashboard', function () {
-        return view('siswa.dashboard');
-    })->name('siswa.dashboard');
-
-    Route::get('/siswa/buku', [BukuController::class, 'katalogSiswa'])->name('siswa.buku.index');
 });

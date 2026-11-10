@@ -7,7 +7,8 @@
             <h6 class="m-0 font-weight-bold text-primary">Edit Data Buku</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('buku.update', $buku->id) }}" method="POST">
+            {{-- Tambahkan enctype di sini --}}
+            <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
@@ -62,6 +63,21 @@
                         <input type="text" class="form-control @error('lokasi_rak') is-invalid @enderror" id="lokasi_rak" name="lokasi_rak" value="{{ old('lokasi_rak', $buku->lokasi_rak) }}">
                         @error('lokasi_rak') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+                </div>
+
+                {{-- Tampilkan Cover Lama Jika Ada --}}
+                <div class="mb-3">
+                    <label for="cover" class="form-label">Cover Buku</label>
+                    @if($buku->cover)
+                        <div class="mb-2">
+                            <img src="{{ asset('storage/' . $buku->cover) }}" alt="Cover" style="height: 100px; object-fit: contain;" class="rounded border">
+                        </div>
+                    @endif
+                    <input type="file" name="cover" id="cover" class="form-control @error('cover') is-invalid @enderror">
+                    <small class="text-muted">Biarkan kosong jika tidak ingin mengubah cover.</small>
+                    @error('cover')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="d-flex justify-content-end">

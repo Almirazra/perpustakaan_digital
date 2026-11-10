@@ -37,6 +37,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="text-center" width="5%">No</th>
+                            <th>Cover</th>
                             <th>Judul Buku</th>
                             <th>Kategori</th>
                             <th>Pengarang</th>
@@ -50,6 +51,13 @@
                         @forelse($buku as $index => $item)
                         <tr>
                             <td class="text-center">{{ $buku->firstItem() + $index }}</td>
+                            <td class="text-center">
+                                @if($item->cover)
+                                    <img src="{{ asset('storage/' . $item->cover) }}" alt="Cover" style="width: 40px; height: 50px; object-fit: contain;" class="rounded border">
+                                @else
+                                    <span class="text-muted small">No Cover</span>
+                                @endif
+                            </td>
                             <td>{{ $item->judul }}</td>
                             <td>{{ $item->kategori ? $item->kategori->nama_kategori : '-' }}</td>
                             <td>{{ $item->pengarang }}</td>
@@ -81,7 +89,8 @@
                         <div class="modal fade" id="editBukuModal{{ $item->id }}" tabindex="-1" aria-labelledby="editBukuLabel{{ $item->id }}" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <form action="{{ route('buku.update', $item->id) }}" method="POST">
+                                    {{-- Form dengan onsubmit untuk mencegah double click --}}
+                                    <form action="{{ route('buku.update', $item->id) }}" method="POST" enctype="multipart/form-data" onsubmit="let btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-header">
@@ -127,6 +136,24 @@
                                                     <input type="text" class="form-control" name="lokasi_rak" value="{{ $item->lokasi_rak }}">
                                                 </div>
                                             </div>
+
+                                            {{-- INPUT DESKRIPSI DI MODAL EDIT --}}
+                                            <div class="mb-3">
+                                                <label class="form-label">Deskripsi / Sinopsis</label>
+                                                <textarea class="form-control" name="sinopsis" rows="4">{{ $item->sinopsis }}</textarea>
+                                            </div>
+
+                                            {{-- INPUT COVER DI MODAL EDIT --}}
+                                            <div class="mb-3">
+                                                <label class="form-label">Cover Buku (Opsional)</label>
+                                                @if($item->cover)
+                                                    <div class="mb-2">
+                                                        <img src="{{ asset('storage/' . $item->cover) }}" alt="Cover" style="height: 80px; object-fit: contain;" class="rounded border">
+                                                    </div>
+                                                @endif
+                                                <input type="file" class="form-control" name="cover">
+                                                <small class="text-muted">Biarkan kosong jika tidak ingin mengganti cover.</small>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -140,7 +167,7 @@
 
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">Data buku belum tersedia.</td>
+                            <td colspan="9" class="text-center text-muted">Data buku belum tersedia.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -159,7 +186,8 @@
 <div class="modal fade" id="tambahBukuModal" tabindex="-1" aria-labelledby="tambahBukuLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('buku.store') }}" method="POST">
+            {{-- Form dengan onsubmit untuk mencegah double click --}}
+            <form action="{{ route('buku.store') }}" method="POST" enctype="multipart/form-data" onsubmit="let btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="tambahBukuLabel">Tambah Data Buku Baru</h5>
@@ -202,6 +230,18 @@
                             <label class="form-label">Lokasi Rak</label>
                             <input type="text" class="form-control" name="lokasi_rak">
                         </div>
+                    </div>
+
+                    {{-- INPUT DESKRIPSI DI MODAL TAMBAH --}}
+                    <div class="mb-3">
+                        <label class="form-label">Deskripsi / Sinopsis</label>
+                        <textarea class="form-control" name="sinopsis" rows="4"></textarea>
+                    </div>
+
+                    {{-- INPUT COVER DI MODAL TAMBAH --}}
+                    <div class="mb-3">
+                        <label class="form-label">Cover Buku</label>
+                        <input type="file" class="form-control" name="cover">
                     </div>
                 </div>
                 <div class="modal-footer">

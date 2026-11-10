@@ -53,7 +53,6 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                    <div class="col-md-4 mb-3">
     <label for="jurusan" class="form-label">Jurusan</label>
     <select id="jurusan" name="jurusan" class="form-select @error('jurusan') is-invalid @enderror" required>
         <option value="">Pilih jurusan</option>
