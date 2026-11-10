@@ -57,7 +57,7 @@ class NotifikasiController extends Controller
             : 0;
 
         // ARAHKAN KE VIEW KHUSUS KOTAK MASUK SISWA
-        return view('pages.notifikasi.index', compact('notifikasis', 'jumlahBelum'));
+        return view('pages.siswaa.notifikasi.index', compact('notifikasis', 'jumlahBelum'));
     }
     public function tandaiSemua(): RedirectResponse
     {

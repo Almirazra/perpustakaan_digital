@@ -1,43 +1,166 @@
 @extends('layouts.app')
 
+@section('title', 'Notifikasi')
+
 @section('content')
 <div class="container-fluid px-4">
-    <h1 class="mt-4 fs-4 mb-2"><i class="fas fa-envelope me-2"></i> Pesan Masuk</h1>
-    <ol class="breadcrumb mb-3 small">
+    <h1 class="mt-4">Notifikasi</h1>
+    <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">Pesan Masuk</li>
+        <li class="breadcrumb-item active">Notifikasi</li>
     </ol>
 
-    <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center border-bottom">
-            <span class="fw-bold small text-dark"><i class="fas fa-bell me-1 text-secondary"></i> Daftar Pesan dari Admin</span>
-            <a href="{{ route('home') }}" class="btn btn-sm btn-secondary py-1 px-2" style="font-size: 0.75rem;">
-                <i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard
-            </a>
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span>
+                <i class="fas fa-bell me-1"></i> Notifikasi siswa
+                @if ($jumlahBelum > 0)
+                    <span class="badge bg-danger ms-1">{{ $jumlahBelum }} belum dibaca</span>
+                @endif
+            </span>
+
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                {{-- Tombol Kirim Pesan / Notifikasi Baru oleh Admin --}}
+                <a href="{{ route('notifikasi.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i> Kirim Notifikasi
+                </a>
+
+                <div class="btn-group btn-group-sm" role="group" aria-label="Filter status">
+                    <a href="{{ route('notifikasi.index') }}" class="btn {{ $status === null ? 'btn-primary' : 'btn-outline-primary' }}">Semua</a>
+                    <a href="{{ route('notifikasi.index', ['status' => 'belum_dibaca']) }}" class="btn {{ $status === 'belum_dibaca' ? 'btn-primary' : 'btn-outline-primary' }}">Belum dibaca</a>
+                    <a href="{{ route('notifikasi.index', ['status' => 'dibaca']) }}" class="btn {{ $status === 'dibaca' ? 'btn-primary' : 'btn-outline-primary' }}">Dibaca</a>
+                </div>
+
+                @if ($jumlahBelum > 0)
+                    <form action="{{ route('notifikasi.dibaca-semua') }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Tandai semua dibaca</button>
+                    </form>
+                @endif
+            </div>
         </div>
-        <div class="card-body p-3 bg-light">
-            @forelse($notifikasis as $notif)
-                <div class="card mb-2 shadow-sm border-0 {{ $notif->status === 'belum_dibaca' ? 'border-start border-primary border-4 bg-white' : 'bg-white' }}" style="border-radius: 6px;">
-                    <div class="card-body py-2 px-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">
-                                {{ $notif->judul }}
-                                @if($notif->status === 'belum_dibaca')
-                                    <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Baru</span>
+
+        <div class="card-body">
+            <table id="tabel-notifikasi" class="table">
+                <thead>
+                    <tr>
+                        <th style="width:50px">No</th>
+                        <th>Siswa</th>
+                        <th>Judul</th>
+                        <th>Pesan</th>
+                        <th>Waktu</th>
+                        <th>Status</th>
+                        <th style="width:230px">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($notifikasis as $n)
+                        @php
+                            // Mengambil data telepon siswa (sesuaikan jika kolomnya no_hp / telp)
+                            $telpSiswa = $n->user->telp ?? $n->user->no_hp ?? $n->siswa->telp ?? $n->siswa->no_hp ?? '';
+                            $hp = preg_replace('/^0/', '62', preg_replace('/\D/', '', $telpSiswa));
+
+                            // Nama siswa (mendukung relasi 'user' atau 'siswa')
+                            $namaSiswa = $n->user->name ?? $n->user->nama_lengkap ?? $n->siswa->nama_lengkap ?? '-';
+                            $kelasSiswa = $n->user->kelas ?? $n->siswa->kelas ?? '';
+                            $jurusanSiswa = $n->user->jurusan ?? $n->siswa->jurusan ?? '';
+
+                            $baru = $n->status === 'belum_dibaca';
+                        @endphp
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                {{ $namaSiswa }}
+                                <div class="small text-muted">{{ $kelasSiswa }} {{ $jurusanSiswa }}</div>
+                            </td>
+                            <td class="{{ $baru ? 'fw-bold' : '' }}">{{ $n->judul }}</td>
+                            <td>{{ $n->pesan }}</td>
+                            <td>
+                                {{ $n->created_at->format('d/m/Y H:i') }}
+                                <div class="small text-muted">{{ $n->created_at->diffForHumans() }}</div>
+                            </td>
+                            <td>
+                                @if ($baru)
+                                    <span class="badge bg-warning text-dark">Belum dibaca</span>
+                                @else
+                                    <span class="badge bg-secondary">Dibaca</span>
                                 @endif
-                            </h6>
-                            <span class="text-muted" style="font-size: 0.75rem;"><i class="fas fa-clock me-1"></i> {{ $notif->created_at->diffForHumans() }}</span>
-                        </div>
-                        <p class="text-secondary mb-0" style="font-size: 0.825rem;">{{ $notif->pesan }}</p>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-4 text-muted small bg-white rounded shadow-sm">
-                    <i class="fas fa-inbox fa-2x mb-2 text-secondary"></i>
-                    <p class="mb-0">Belum ada pesan masuk untukmu.</p>
-                </div>
-            @endforelse
+                            </td>
+                            <td>
+                                @if ($hp !== '')
+                                    <a href="https://wa.me/{{ $hp }}?text={{ urlencode($n->judul . ': ' . $n->pesan) }}"
+                                       target="_blank" rel="noopener" class="btn btn-outline-success btn-sm" title="Kirim lewat WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                @endif
+
+                                @if ($baru)
+                                    <form action="{{ route('notifikasi.dibaca', $n) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">Tandai dibaca</button>
+                                    </form>
+                                @endif
+
+                                <button type="button" class="btn btn-outline-danger btn-sm btn-hapus"
+                                        data-url="{{ route('notifikasi.destroy', $n) }}"
+                                        data-nama="{{ $n->judul }}">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<form id="formHapus" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection
+
+@push('script')
+<script>
+document.addEventListener('click', (e) => {
+    const tombol = e.target.closest('.btn-hapus');
+    if (!tombol) return;
+
+    Swal.fire({
+        title: 'Hapus notifikasi?',
+        text: '"' + tombol.dataset.nama + '" akan dihapus permanen.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3E4A56',
+        cancelButtonColor: '#74879A',
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal',
+    }).then((hasil) => {
+        if (hasil.isConfirmed) {
+            const f = document.getElementById('formHapus');
+            f.action = tombol.dataset.url;
+            f.submit();
+        }
+    });
+});
+
+@if (session('success'))
+    Swal.fire({ icon: 'success', title: @json(session('success')), confirmButtonColor: '#3E4A56', timer: 2500, showConfirmButton: false });
+@endif
+@if (session('error'))
+    Swal.fire({ icon: 'error', title: 'Gagal', text: @json(session('error')), confirmButtonColor: '#3E4A56' });
+@endif
+
+new simpleDatatables.DataTable('#tabel-notifikasi', {
+    labels: {
+        placeholder: 'Cari notifikasi...',
+        perPage: 'data per halaman',
+        noRows: 'Belum ada notifikasi',
+        info: 'Menampilkan {start} sampai {end} dari {rows} data',
+    },
+});
+</script>
+@endpush
