@@ -1,15 +1,19 @@
-@extends('layouts.siswa') {{-- Sesuaikan nama layout utama kamu --}}
+@extends('layouts.app') {{-- Sesuaikan nama layout utama kamu --}}
 
 @section('content')
 <div class="container-fluid py-3">
     <div class="row">
-        
+         <h1 class="mt-4">Daftar Buku</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Daftar Buku</li>
+    </ol>
         {{-- BAGIAN KIRI & TENGAH: Pencarian & Katalog Buku --}}
         <div class="col-lg-8">
             <h4 class="fw-bold mb-3">Daftar Buku</h4>
 
             {{-- Form Pencarian & Filter Kategori --}}
-            <form action="{{ route('siswa.bukus.index') }}" method="GET" class="row g-2 mb-4">
+            <form action="{{ route('siswa.buku.index') }}" method="GET" class="row g-2 mb-4">
                 <div class="col-md-6">
                     <input type="text" name="keyword" class="form-control" placeholder="Cari judul / penulis / kategori..." value="{{ request('keyword') }}">
                 </div>
@@ -40,15 +44,15 @@
                             </div>
                             <h6 class="fw-bold text-truncate mb-1">{{ $buku->judul }}</h6>
                             <p class="text-muted small mb-2 text-truncate">{{ $buku->penulis }}</p>
-                            
+
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 @if($buku->stok > 0)
                                     <span class="badge bg-outline-secondary border text-dark">Tersedia</span>
                                 @else
                                     <span class="badge bg-secondary">Dipinjam</span>
                                 @endif
-                                
-                                <a href="{{ route('siswa.bukus.index', array_merge(request()->query(), ['detail_id' => $buku->id])) }}" class="btn btn-sm btn-outline-dark">
+
+                                <a href="{{ route('siswa.buku.index', array_merge(request()->query(), ['detail_id' => $buku->id])) }}" class="btn btn-sm btn-outline-dark">
                                     Detail
                                 </a>
                             </div>
@@ -100,7 +104,7 @@
 
                     {{-- Form/Tombol Pinjam Buku --}}
                     @if($detailBuku->stok > 0)
-                        <form action="{{ route('siswa.peminjaman.store') }}" method="POST">
+                        <form action="{{ route('siswa.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="buku_id" value="{{ $detailBuku->id }}">
                             <button type="submit" class="btn btn-dark w-100 fw-bold mb-2 py-2">PINJAM BUKU</button>
@@ -109,7 +113,7 @@
                         <button class="btn btn-secondary w-100 fw-bold mb-2 py-2" disabled>STOK HABIS</button>
                     @endif
 
-                    <a href="{{ route('siswa.bukus.index') }}" class="btn btn-outline-secondary w-100">Kembali</a>
+                    <a href="{{ route('siswa.buku.index') }}" class="btn btn-outline-secondary w-100">Kembali</a>
                 @else
                     <p class="text-muted text-center py-5">Pilih buku untuk melihat detail.</p>
                 @endif

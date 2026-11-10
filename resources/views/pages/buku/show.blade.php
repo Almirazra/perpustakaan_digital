@@ -43,6 +43,10 @@
                     <th>Lokasi Rak</th>
                     <td>{{ $buku->lokasi_rak ?? 'Belum ditentukan' }}</td>
                 </tr>
+                <tr>
+                    <th>Sinopsis</th>
+                    <td>{{ $buku->sinopsis ?? 'Belum ada sinopsis' }}</td>
+                </tr>
             </table>
         </div>
     </div>

@@ -113,3 +113,14 @@ footer.bg-light {
     --bs-alert-border-color: var(--c-fog);
     --bs-alert-color: var(--c-ink);
 }
+/* Mengecilkan ukuran ikon panah SVG pada pagination */
+.pagination svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Menyesuaikan ukuran padding tombol pagination agar lebih rapi dan kecil */
+.pagination .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}

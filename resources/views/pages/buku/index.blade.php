@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <!-- Header & Tombol Trigger Modal Tambah -->
@@ -10,7 +11,7 @@
                 + Tambah Buku
             </button>
         </div>
-        
+
         <div class="card-body">
             <!-- Notifikasi Sukses / Error -->
             @if(session('success'))
@@ -42,6 +43,7 @@
                             <th>Kategori</th>
                             <th>Pengarang</th>
                             <th>Penerbit</th>
+                            <th>Sinopsis</th>
                             <th class="text-center">Tahun</th>
                             <th class="text-center">Stok</th>
                             <th class="text-center" width="15%">Aksi</th>
@@ -62,6 +64,7 @@
                             <td>{{ $item->kategori ? $item->kategori->nama_kategori : '-' }}</td>
                             <td>{{ $item->pengarang }}</td>
                             <td>{{ $item->penerbit }}</td>
+                            <td>{{ $item->sinopsis }}</td>
                             <td class="text-center">{{ $item->tahun_terbit }}</td>
                             <td class="text-center">
                                 @if($item->stok > 0)
@@ -173,11 +176,10 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Pagination -->
-            <div class="d-flex justify-content-end mt-3">
-                {{ $buku->links() }}
-            </div>
+
+    {{ $buku->links('pagination::bootstrap-5') }}
+
+
         </div>
     </div>
 </div>

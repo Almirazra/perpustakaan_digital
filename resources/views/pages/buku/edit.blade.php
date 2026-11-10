@@ -11,7 +11,7 @@
             <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="mb-3">
                     <label for="judul" class="form-label">Judul Buku</label>
                     <input type="text" class="form-control @error('judul') is-invalid @enderror" id="judul" name="judul" value="{{ old('judul', $buku->judul) }}" required>
@@ -37,7 +37,7 @@
                         <input type="text" class="form-control @error('pengarang') is-invalid @enderror" id="pengarang" name="pengarang" value="{{ old('pengarang', $buku->pengarang) }}" required>
                         @error('pengarang') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="penerbit" class="form-label">Penerbit</label>
                         <input type="text" class="form-control @error('penerbit') is-invalid @enderror" id="penerbit" name="penerbit" value="{{ old('penerbit', $buku->penerbit) }}" required>
@@ -51,7 +51,7 @@
                         <input type="number" class="form-control @error('tahun_terbit') is-invalid @enderror" id="tahun_terbit" name="tahun_terbit" value="{{ old('tahun_terbit', $buku->tahun_terbit) }}" required>
                         @error('tahun_terbit') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    
+
                     <div class="col-md-4 mb-3">
                         <label for="stok" class="form-label">Stok Buku</label>
                         <input type="number" class="form-control @error('stok') is-invalid @enderror" id="stok" name="stok" value="{{ old('stok', $buku->stok) }}" min="0" required>
@@ -63,6 +63,12 @@
                         <input type="text" class="form-control @error('lokasi_rak') is-invalid @enderror" id="lokasi_rak" name="lokasi_rak" value="{{ old('lokasi_rak', $buku->lokasi_rak) }}">
                         @error('lokasi_rak') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sinopsis" class="form-label">Sinopsis</label>
+                    <textarea class="form-control @error('sinopsis') is-invalid @enderror" id="sinopsis" name="sinopsis" rows="4">{{ old('sinopsis', $buku->sinopsis) }}</textarea>
+                    @error('sinopsis') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
                 {{-- Tampilkan Cover Lama Jika Ada --}}

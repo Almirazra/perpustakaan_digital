@@ -25,7 +25,7 @@ class BukuController extends Controller
             $query->where('kategori_id', $request->kategori_id);
         }
 
-        $buku = $query->latest()->paginate(6)->withQueryString(); 
+        $buku = $query->latest()->paginate(6)->withQueryString();
         $kategori = KategoriModel::all();
 
         // Menentukan Detail Buku yang tampil di panel kanan
@@ -33,7 +33,7 @@ class BukuController extends Controller
         if ($request->filled('detail_id')) {
             $detailBuku = BukuModel::with('kategori')->find($request->detail_id);
         } else {
-            $detailBuku = $buku->first(); 
+            $detailBuku = $buku->first();
         }
 
         return view('pages.siswa.buku.katalog_siswa', compact('buku', 'kategori', 'detailBuku'));
@@ -44,7 +44,7 @@ class BukuController extends Controller
     {
         $buku = BukuModel::with('kategori')->findOrFail($id);
 
-        return view('pages.siswa.buku_detail', compact('buku'));
+        return view('pages.siswa.buku.index', compact('buku'));
     }
 
     // --- METODE ADMIN / PETUGAS ---
