@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     })->name('siswa.dashboard');
 
     Route::get('/siswa/buku', [BukuController::class, 'katalogSiswa'])->name('siswa.buku.index');
-    Route::get('/siswa/notifikasi', [NotifikasiSiswaController::class, 'index'])->name('siswa.notifikasi.index');
+    Route::get('/siswa/notifikasi', [NotifikasiController::class, 'indexSiswa'])->name('siswa.notifikasi.index');
 
     // Rute kartu dan resource siswa di bawahnya
     Route::get('siswa/kartu', [SiswaController::class, 'kartuSemua'])->name('siswa.kartu.semua');
@@ -52,13 +52,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
     Route::post('pengembalian/{peminjaman}/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
-    
+
     Route::resource('denda', DendaController::class)
         ->only(['index', 'update'])
         ->parameters(['denda' => 'denda']);
-        
+
     Route::patch('notifikasi/dibaca-semua', [NotifikasiController::class, 'tandaiSemua'])->name('notifikasi.dibaca-semua');
     Route::patch('notifikasi/{notifikasi}/dibaca', [NotifikasiController::class, 'tandaiDibaca'])->name('notifikasi.dibaca');
+    Route::get('/admin/notifikasi/create', [App\Http\Controllers\NotifikasiController::class, 'create'])->name('notifikasi.create');
+    Route::post('/admin/notifikasi', [App\Http\Controllers\NotifikasiController::class, 'store'])->name('notifikasi.store');
     Route::resource('notifikasi', NotifikasiController::class)
         ->only(['index', 'destroy'])
         ->parameters(['notifikasi' => 'notifikasi']);

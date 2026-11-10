@@ -8,6 +8,7 @@ use App\Models\PengembalianModel as Pengembalian;
 use App\Models\SiswaModel as Siswa;
 use App\Models\DendaModel as Denda;
 use App\Models\ActivityLog as ActivityLog;
+use App\Models\NotifikasiModel as Notifikasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -37,25 +38,37 @@ class HomeController extends Controller
                     ->get();
 
                 $totalDipinjam = $peminjamanAktif->count() . ' buku';
-                
+
                 $jatuhTempo = $peminjamanAktif->sortBy('tanggal_kembali')->first();
                 $jatuhTempoTerdekat = $jatuhTempo ? Carbon::parse($jatuhTempo->tanggal_kembali)->format('d M Y') : '-';
 
                 $totalDenda = 0;
+
+                // Mengambil notifikasi khusus siswa yang sedang login
+                $jumlahBelum = Notifikasi::where('siswa_id', $siswa->id)
+                                ->where('status', 'belum_dibaca')
+                                ->count();
+
+                $notifikasiSiswa = Notifikasi::where('siswa_id', $siswa->id)
+                                    ->latest()
+                                    ->take(10)
+                                    ->get();
             } else {
                 $peminjamanAktif = collect();
                 $totalDipinjam = '0 buku';
                 $jatuhTempoTerdekat = '-';
                 $totalDenda = 0;
+                $jumlahBelum = 0;
+                $notifikasiSiswa = collect();
             }
 
-            // UBAH DI SINI: Ganti 'dashboard' menjadi 'home'
             return view('home', [
                 'totalDipinjam'      => $totalDipinjam,
                 'jatuhTempoTerdekat' => $jatuhTempoTerdekat,
                 'totalDenda'         => $totalDenda,
                 'peminjamanAktif'    => $peminjamanAktif,
-                'notifikasiSiswa'    => [] // Menyesuaikan nama variabel dengan file view kita
+                'jumlahBelum'        => $jumlahBelum,
+                'notifikasiSiswa'    => $notifikasiSiswa
             ]);
         }
 
@@ -73,7 +86,7 @@ class HomeController extends Controller
             'totalBuku'         => Buku::count(),
             'totalSiswa'        => Siswa::count(),
             'sedangDipinjam'    => Peminjaman::where('status', 'dipinjam')->count(),
-            'totalDendaAdmin'   => Denda::sum('jumlah'), // Menyesuaikan nama variabel dengan file view kita
+            'totalDendaAdmin'   => Denda::sum('jumlah'),
             'totalPeminjaman'   => Peminjaman::count(),
             'totalPengembalian' => Pengembalian::count(),
             'dendaBelumBayar'   => Denda::where('status_bayar', 'belum_bayar')->sum('jumlah'),

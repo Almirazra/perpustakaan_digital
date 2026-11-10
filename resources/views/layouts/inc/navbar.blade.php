@@ -19,11 +19,24 @@
 
                 <!-- Ikon Amplop Pesan -->
                 <li class="nav-item me-3">
+                    @php
+                        $badgeBelum = 0;
+                        if (Auth::check() && Auth::user()->role === 'siswa') {
+                            $nisSiswa = explode('@', Auth::user()->email)[0];
+                            $dataSiswa = \App\Models\SiswaModel::where('nis', $nisSiswa)->first();
+                            if ($dataSiswa) {
+                                $badgeBelum = \App\Models\NotifikasiModel::where('siswa_id', $dataSiswa->id)
+                                              ->where('status', 'belum_dibaca')
+                                              ->count();
+                            }
+                        }
+                    @endphp
+
                     <a href="{{ route('siswa.notifikasi.index') }}" class="nav-link text-white position-relative px-2" title="Pesan Masuk">
                         <i class="fas fa-envelope fa-lg"></i>
-                        @if(isset($jumlahBelum) && $jumlahBelum > 0)
+                        @if($badgeBelum > 0)
                             <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.55rem;">
-                                {{ $jumlahBelum }}
+                                {{ $badgeBelum }}
                             </span>
                         @endif
                     </a>

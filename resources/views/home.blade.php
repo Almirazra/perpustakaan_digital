@@ -158,13 +158,13 @@
                 </div>
             </div>
         </div>
-    
+
     @else
         {{-- ========================================================= --}}
         {{-- DASBOR SISWA --}}
         {{-- ========================================================= --}}
         <div class="container-fluid px-4 py-3">
-            
+
             <!-- Judul Halaman Asli Tanpa Profil/Amplop -->
             <h1 class="mt-2 mb-4">Dashboard Siswa</h1>
 
@@ -199,7 +199,7 @@
             <!-- Bagian Bawah: Tabel Peminjaman Aktif & Notifikasi -->
             <div class="row g-3">
                 <!-- Tabel Peminjaman Aktif (Kiri) -->
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="card shadow-sm border border-dark rounded-0 h-100">
                         <div class="card-header bg-white border-bottom border-dark py-3">
                             <h5 class="fw-bold mb-0">Peminjaman Aktif</h5>
@@ -234,21 +234,6 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kolom Notifikasi (Kanan) -->
-                <div class="col-lg-4">
-                    <div class="card shadow-sm border border-dark rounded-0 h-100">
-                        <div class="card-header bg-white border-bottom border-dark py-3">
-                            <h5 class="fw-bold mb-0">Notifikasi</h5>
-                        </div>
-                        <div class="card-body d-flex flex-column gap-3">
-                            <div class="border border-dark p-3 bg-light">
-                                <h6 class="fw-bold mb-1">Selamat Datang!</h6>
-                                <p class="mb-0 text-muted small">Akun siswa berhasil masuk. Silakan pilih menu Buku untuk mulai meminjam.</p>
                             </div>
                         </div>
                     </div>
