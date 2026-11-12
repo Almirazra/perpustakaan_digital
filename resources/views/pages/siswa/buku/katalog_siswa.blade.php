@@ -47,7 +47,7 @@
                         <div class="card h-100 shadow-sm border {{ isset($detailBuku) && $detailBuku->id == $item->id ? 'border-dark' : 'border-light' }}">
                             @if ($item->cover)
                                 <img
-                                    src="{{ asset('storage/' . $item->cover) }}"
+                                    src="{{ asset('assets/img/' . $item->cover) }}"
                                     class="card-img-top"
                                     alt="Cover {{ $item->judul }}"
                                     style="height: 180px; object-fit: contain; padding: 10px;"
@@ -108,7 +108,7 @@
                         <div class="text-center mb-3">
                             @if ($detailBuku->cover)
                                 <img
-                                    src="{{ asset('storage/' . $detailBuku->cover) }}"
+                                    src="{{ asset('assets/img/' . $detailBuku->cover) }}"
                                     alt="Cover {{ $detailBuku->judul }}"
                                     class="img-fluid border rounded"
                                     style="max-height: 200px; object-fit: contain;"
@@ -140,9 +140,23 @@
 
                         {{-- TOMBOL AKSI PINJAM --}}
                         <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-dark fw-bold py-2" @if($detailBuku->stok <= 0) disabled @endif>
-                                PINJAM BUKU
-                            </button>
+                            @if($detailBuku->stok > 0)
+                                <form action="{{ route('peminjaman.store') }}" method="POST">
+                                    @csrf
+                                    {{-- Mengambil ID siswa secara otomatis berdasarkan nama user yang sedang login --}}
+                                    <input type="hidden" name="siswa_id" value="{{ optional(\App\Models\SiswaModel::where('nama_lengkap', Auth::user()->name)->first())->id }}">
+                                    <input type="hidden" name="buku_id" value="{{ $detailBuku->id }}">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <button type="submit" class="btn btn-dark fw-bold py-2 w-100" onclick="return confirm('Yakin ingin meminjam buku ini?')">
+                                        PINJAM BUKU
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="btn btn-secondary fw-bold py-2 w-100" disabled>
+                                    STOK HABIS
+                                </button>
+                            @endif
+
                             <a href="{{ route('siswa.buku.index') }}" class="btn btn-outline-secondary btn-sm">
                                 Kembali
                             </a>

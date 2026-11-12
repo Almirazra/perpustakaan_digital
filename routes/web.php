@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/siswa/buku', [BukuController::class, 'katalogSiswa'])->name('siswa.buku.index');
     Route::get('/siswa/notifikasi', [NotifikasiController::class, 'indexSiswa'])->name('siswa.notifikasi.index');
 
+    Route::get('/siswa/peminjaman', [PeminjamanController::class, 'peminjamanSiswa'])->name('siswa.peminjaman.index');
+    Route::get('/siswa/riwayat', [PeminjamanController::class, 'riwayatSiswa'])->name('siswa.riwayat.index'); // (Opsional jika nanti mau buat riwayat)
+
     // Rute kartu dan resource siswa di bawahnya
     Route::get('siswa/kartu', [SiswaController::class, 'kartuSemua'])->name('siswa.kartu.semua');
     Route::get('siswa/{siswa}/kartu', [SiswaController::class, 'kartu'])->name('siswa.kartu');

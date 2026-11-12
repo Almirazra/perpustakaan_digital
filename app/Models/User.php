@@ -20,7 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // TAMBAHKAN INI: Agar parameter role dari controller bisa disimpan ke database
+        'role', // Parameter role dari controller
     ];
 
     /**
@@ -44,5 +44,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke Model Siswa (Satu user siswa memiliki satu data profil siswa)
+     */
+    public function siswa()
+    {
+        return $this->hasOne(SiswaModel::class, 'user_id');
     }
 }

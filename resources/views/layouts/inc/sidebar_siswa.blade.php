@@ -15,13 +15,13 @@
             </a>
 
             <!-- Peminjaman Aktif -->
-            <a class="nav-link {{ request()->routeIs('siswa.peminjaman*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('siswa.peminjaman*') ? 'active' : '' }}" href="{{ route('siswa.peminjaman.index') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-hand-holding"></i></div>
                 Peminjaman
             </a>
 
             <!-- Riwayat -->
-            <a class="nav-link {{ request()->routeIs('siswa.riwayat*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('siswa.riwayat*') ? 'active' : '' }}" href="{{ route('siswa.riwayat.index') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
                 Riwayat
             </a>
