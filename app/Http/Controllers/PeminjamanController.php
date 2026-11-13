@@ -27,8 +27,6 @@ class PeminjamanController extends Controller
     }
 
     // Menyimpan data peminjaman baru
-    // Menyimpan data peminjaman baru
-    // Menyimpan data peminjaman baru
     public function store(Request $request)
     {
         $request->validate([
@@ -67,8 +65,6 @@ class PeminjamanController extends Controller
         // Jika admin yang menambah, arahkan ke halaman kelola admin
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil ditambahkan.');
     }
-    // Proses pengembalian buku (mengubah status menjadi dikembalikan)
-
 
     // Menghapus data peminjaman
     public function destroy(int $id)
@@ -76,45 +72,33 @@ class PeminjamanController extends Controller
         $peminjaman = PeminjamanModel::findOrFail($id);
         $peminjaman->delete();
 
-        // Perhatikan bagian route ini disamakan ke 'peminjaman.index'
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil dihapus.');
     }
 
-   public function peminjamanSiswa()
+    public function peminjamanSiswa()
     {
         $user = Auth::user();
-        
-        // Memperbaiki pencarian siswa agar mencocokkan nama user yang login dengan nama_lengkap di tabel siswas
         $siswa = SiswaModel::where('nama_lengkap', $user->name)->first();
 
         $peminjamans = collect();
-        $jatuhTempoTerdekat = null;
-        $totalDenda = 0;
-
         if ($siswa) {
-            $peminjamans = PeminjamanModel::with(['buku'])
+            $peminjamans = PeminjamanModel::with(['buku', 'pengembalian'])
                 ->where('siswa_id', $siswa->id)
                 ->where('status', 'dipinjam')
-                ->orderBy('tanggal_kembali', 'asc')
+                ->latest()
                 ->get();
-
-            if ($peminjamans->isNotEmpty()) {
-                $jatuhTempoTerdekat = $peminjamans->first()->tanggal_kembali;
-            }
-
-            $tarifDenda = config('perpustakaan.denda_per_hari', 1000);
-            foreach ($peminjamans as $item) {
-                if (now()->startOfDay()->gt($item->tanggal_kembali->startOfDay())) {
-                    $hariTerlambat = $item->tanggal_kembali->startOfDay()->diffInDays(now()->startOfDay());
-                    $item->estimasi_denda = $hariTerlambat * $tarifDenda * $item->jumlah;
-                    $totalDenda += $item->estimasi_denda;
-                } else {
-                    $item->estimasi_denda = 0;
-                }
-            }
         }
 
-        return view('pages.siswa_member.peminjaman', compact('peminjamans', 'jatuhTempoTerdekat', 'totalDenda'));
+        // Ambil SEMUA peminjaman aktif dari siswa lain untuk transparansi
+        $pinjamanLain = PeminjamanModel::with(['buku', 'siswa'])
+            ->where('status', 'dipinjam')
+            ->when($siswa, function($query) use ($siswa) {
+                return $query->where('siswa_id', '!=', $siswa->id);
+            })
+            ->latest()
+            ->get();
+
+        return view('pages.siswa_member.peminjaman', compact('peminjamans', 'pinjamanLain'));
     }
 
     public function riwayatSiswa()
@@ -125,7 +109,6 @@ class PeminjamanController extends Controller
         $riwayats = collect();
 
         if ($siswa) {
-            // Mengambil peminjaman milik siswa yang statusnya sudah dikembalikan / selain 'dipinjam'
             $riwayats = PeminjamanModel::with(['buku', 'pengembalian'])
                 ->where('siswa_id', $siswa->id)
                 ->where('status', '!=', 'dipinjam')
@@ -136,4 +119,3 @@ class PeminjamanController extends Controller
         return view('pages.siswa_member.riwayat', compact('riwayats'));
     }
 }
-

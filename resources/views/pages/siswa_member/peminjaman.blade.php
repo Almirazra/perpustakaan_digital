@@ -4,69 +4,27 @@
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
         <div>
-            <h1 class="h3 mb-0 text-dark fw-bold">Peminjaman Aktif Saya</h1>
-            <p class="text-muted small mb-0">Daftar buku yang sedang kamu pinjam saat ini.</p>
+            <h1 class="h3 mb-0 text-dark fw-bold">Peminjaman Aktif</h1>
+            <p class="text-muted small mb-0">Kelola buku yang sedang kamu pinjam dan pantau status buku perpustakaan.</p>
         </div>
-        <a href="{{ route('siswa.buku.index') }}" class="btn btn-dark btn-sm">
-            <i class="fas fa-plus me-1"></i> Pinjam Buku Lain
+        <a href="{{ route('siswa.riwayat.index') }}" class="btn btn-dark btn-sm">
+            <i class="fas fa-history me-1"></i> Lihat Riwayat
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <!-- Ringkasan Statistik Atas -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #343a40 !important;">
-                <div class="card-body">
-                    <div class="text-muted small fw-semibold text-uppercase">Buku Sedang Dipinjam</div>
-                    <div class="h3 fw-bold text-dark mt-1 mb-0">{{ $peminjamans->sum('jumlah') }} <span class="fs-6 fw-normal text-muted">Eksemplar</span></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0d6efd !important;">
-                <div class="card-body">
-                    <div class="text-muted small fw-semibold text-uppercase">Jatuh Tempo Terdekat</div>
-                    <div class="h4 fw-bold text-dark mt-1 mb-0">
-                        {{ $jatuhTempoTerdekat ? $jatuhTempoTerdekat->format('d M Y') : '-' }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            @php
-                $warnaBorder = $totalDenda > 0 ? '#dc3545' : '#198754';
-            @endphp
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid {{ $warnaBorder }} !important;">
-                <div class="card-body">
-                    <div class="text-muted small fw-semibold text-uppercase">Estimasi Denda Berjalan</div>
-                    <div class="h3 fw-bold {{ $totalDenda > 0 ? 'text-danger' : 'text-success' }} mt-1 mb-0">
-                        Rp {{ number_format($totalDenda, 0, ',', '.') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tabel Daftar Peminjaman Aktif -->
+    <!-- CARD 1: PEMINJAMAN SAYA -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
-            <span class="fw-semibold"><i class="fas fa-book-reader me-2"></i>Daftar Peminjaman Berlangsung</span>
-            <span class="badge bg-secondary">{{ $peminjamans->count() }} Transaksi</span>
+            <span class="fw-semibold"><i class="fas fa-book-reader me-2"></i>Buku yang Sedang Kamu Pinjam</span>
+            <span class="badge bg-secondary">{{ $peminjamans->count() }} Buku</span>
         </div>
         <div class="card-body p-0">
             @if($peminjamans->isEmpty())
                 <div class="text-center py-5">
-                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-                    <h5 class="fw-bold text-dark">Belum Ada Peminjaman Aktif</h5>
+                    <i class="fas fa-books fa-3x text-muted mb-3"></i>
+                    <h5 class="fw-bold text-dark">Tidak Ada Peminjaman Aktif</h5>
                     <p class="text-muted small mb-3">Kamu sedang tidak meminjam buku apa pun saat ini.</p>
-                    <a href="{{ route('siswa.buku.index') }}" class="btn btn-dark btn-sm px-4">Jelajahi Katalog Buku</a>
+                    <a href="{{ route('siswa.buku.index') }}" class="btn btn-dark btn-sm px-4">Pinjam Buku Sekarang</a>
                 </div>
             @else
                 <div class="table-responsive">
@@ -76,112 +34,48 @@
                                 <th class="ps-4">Buku</th>
                                 <th>Jumlah</th>
                                 <th>Tanggal Pinjam</th>
-                                <th>Batas Kembali</th>
-                                <th>Status</th>
-                                <th>Denda</th>
-                                <th class="text-end pe-4">Aksi</th>
+                                <th>Jatuh Tempo</th>
+                                <th>Status / Denda</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($peminjamans as $pinjam)
+                            @foreach($peminjamans as $item)
                                 @php
-                                    $isTerlambat = now()->startOfDay()->gt($pinjam->tanggal_kembali->startOfDay());
-                                    $sisaHari = now()->startOfDay()->diffInDays($pinjam->tanggal_kembali->startOfDay(), false);
+                                    $tglJatuhTempo = \Carbon\Carbon::parse($item->tanggal_pengembalian);
+                                    $selisihHari = now()->startOfDay()->diffInDays($tglJatuhTempo->startOfDay(), false);
+                                    $terlambat = $selisihHari < 0;
+                                    $dendaEst = $terlambat ? abs($selisihHari) * 1000 * $item->jumlah : 0;
                                 @endphp
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            @if($pinjam->buku && $pinjam->buku->cover)
-                                                <img src="{{ asset('assets/img/' . $pinjam->buku->cover) }}" alt="Cover" class="rounded me-3 border" style="width: 45px; height: 60px; object-fit: contain;">
+                                            @if($item->buku && $item->buku->cover)
+                                                <img src="{{ asset('assets/img/' . $item->buku->cover) }}" alt="Cover" class="rounded me-3 border" style="width: 60px; height: 80px; object-fit: contain;">
                                             @else
-                                                <div class="bg-secondary bg-opacity-25 rounded d-flex align-items-center justify-content-center me-3 text-muted small" style="width: 45px; height: 60px;">
-                                                    Cover
-                                                </div>
+                                                <div class="bg-secondary bg-opacity-25 rounded d-flex align-items-center justify-content-center me-3 text-muted small" style="width: 60px; height: 80px;">Cover</div>
                                             @endif
                                             <div>
-                                                <div class="fw-bold text-dark">{{ $pinjam->buku->judul ?? 'Judul Tidak Tersedia' }}</div>
-                                                <div class="text-muted small">
-                                                    {{ $pinjam->buku->pengarang ?? '-' }} • 
-                                                    <span class="badge bg-light text-dark border">{{ $pinjam->buku->kategori->nama_kategori ?? 'Umum' }}</span>
-                                                </div>
+                                                <div class="fw-bold text-dark">{{ $item->buku->judul ?? 'Judul Tidak Tersedia' }}</div>
+                                                <div class="text-muted small">{{ $item->buku->pengarang ?? '-' }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><span class="fw-semibold">{{ $pinjam->jumlah }}</span> eks</td>
-                                    <td>{{ $pinjam->tanggal_peminjaman->format('d/m/Y') }}</td>
+                                    <td><span class="fw-semibold">{{ $item->jumlah }}</span> eks</td>
+                                    <td>{{ $item->tanggal_peminjaman ? \Carbon\Carbon::parse($item->tanggal_peminjaman)->format('d/m/Y') : '-' }}</td>
+                                    <td>{{ $tglJatuhTempo->format('d/m/Y') }}</td>
                                     <td>
-                                        <div class="fw-semibold {{ $isTerlambat ? 'text-danger' : 'text-dark' }}">
-                                            {{ $pinjam->tanggal_kembali->format('d/m/Y') }}
-                                        </div>
-                                        @if($isTerlambat)
-                                            <small class="text-danger">Terlambat {{ abs($sisaHari) }} hari</small>
-                                        @elseif($sisaHari == 0)
-                                            <small class="text-warning fw-bold">Jatuh tempo hari ini</small>
+                                        @if($terlambat)
+                                            <span class="badge bg-danger mb-1">Terlambat ({{ abs($selisihHari) }} hari)</span>
+                                            <div class="text-danger small fw-semibold">Est. Denda: Rp {{ number_format($dendaEst, 0, ',', '.') }}</div>
+                                        @elseif($selisihHari <= 2)
+                                            <span class="badge bg-warning text-dark mb-1">Segera Kembali ({{ $selisihHari }} hari lagi)</span>
+                                            <div class="text-muted small">Tanpa Denda</div>
                                         @else
-                                            <small class="text-muted">Sisa {{ $sisaHari }} hari</small>
+                                            <span class="badge bg-success mb-1">Dipinjam</span>
+                                            <div class="text-muted small">Aman</div>
                                         @endif
-                                    </td>
-                                    <td>
-                                        @if($isTerlambat)
-                                            <span class="badge bg-danger">Terlambat</span>
-                                        @elseif($sisaHari <= 2)
-                                            <span class="badge bg-warning text-dark">Segera Kembali</span>
-                                        @else
-                                            <span class="badge bg-primary">Dipinjam</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($pinjam->estimasi_denda > 0)
-                                            <span class="text-danger fw-bold">Rp {{ number_format($pinjam->estimasi_denda, 0, ',', '.') }}</span>
-                                        @else
-                                            <span class="text-muted">Rp 0</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-end pe-4">
-                                        <button type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal{{ $pinjam->id }}">
-                                            Detail
-                                        </button>
                                     </td>
                                 </tr>
-
-                                <!-- Modal Detail Peminjaman -->
-                                <div class="modal fade" id="detailModal{{ $pinjam->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content border-0 shadow">
-                                            <div class="modal-header bg-dark text-white">
-                                                <h5 class="modal-title fs-6">Rincian Peminjaman #{{ $pinjam->id }}</h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h6 class="fw-bold text-dark mb-1">{{ $pinjam->buku->judul ?? '-' }}</h6>
-                                                <p class="text-muted small mb-3">Pengarang: {{ $pinjam->buku->pengarang ?? '-' }} | Penerbit: {{ $pinjam->buku->penerbit ?? '-' }}</p>
-                                                <ul class="list-group list-group-flush small">
-                                                    <li class="list-group-item d-flex justify-content-between px-0">
-                                                        <span class="text-muted">Tanggal Pinjam</span>
-                                                        <span class="fw-semibold">{{ $pinjam->tanggal_peminjaman->format('d F Y') }}</span>
-                                                    </li>
-                                                    <li class="list-group-item d-flex justify-content-between px-0">
-                                                        <span class="text-muted">Batas Pengembalian</span>
-                                                        <span class="fw-semibold">{{ $pinjam->tanggal_kembali->format('d F Y') }}</span>
-                                                    </li>
-                                                    <li class="list-group-item d-flex justify-content-between px-0">
-                                                        <span class="text-muted">Jumlah Dipinjam</span>
-                                                        <span class="fw-semibold">{{ $pinjam->jumlah }} Eksemplar</span>
-                                                    </li>
-                                                    <li class="list-group-item d-flex justify-content-between px-0">
-                                                        <span class="text-muted">Estimasi Denda</span>
-                                                        <span class="fw-bold {{ $pinjam->estimasi_denda > 0 ? 'text-danger' : 'text-success' }}">
-                                                            Rp {{ number_format($pinjam->estimasi_denda, 0, ',', '.') }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="modal-footer bg-light">
-                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -190,16 +84,59 @@
         </div>
     </div>
 
-    <!-- Info Ketentuan Peminjaman -->
-    <div class="card border-0 shadow-sm bg-light">
-        <div class="card-body py-3">
-            <div class="d-flex align-items-start">
-                <i class="fas fa-info-circle text-dark mt-1 me-3"></i>
-                <div class="small text-muted">
-                    <strong class="text-dark">Ketentuan Peminjaman:</strong> Harap kembalikan buku ke petugas perpustakaan sebelum melewati tanggal batas kembali untuk menghindari denda keterlambatan sebesar <strong>Rp 1.000/hari</strong> per buku.
+    <!-- CARD 2: STATUS BUKU SEDANG DIPINJAM SISWA LAIN (TRANSPARANSI) -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white py-3 d-flex justify-content-between align-items-center">
+            <span class="fw-semibold"><i class="fas id-card me-2"></i>Status Peminjaman Siswa Lain (Transparansi Buku Keluar)</span>
+            <span class="badge bg-dark">{{ $pinjamanLain->count() }} Buku</span>
+        </div>
+        <div class="card-body p-0">
+            @if($pinjamanLain->isEmpty())
+                <div class="text-center py-4 text-muted small">
+                    Tidak ada siswa lain yang sedang meminjam buku saat ini.
                 </div>
-            </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Buku</th>
+                                <th>Peminjam (Siswa)</th>
+                                <th>Jumlah</th>
+                                <th>Tanggal Pinjam</th>
+                                <th>Estimasi Kembali</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pinjamanLain as $lain)
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            @if($lain->buku && $lain->buku->cover)
+                                                <img src="{{ asset('assets/img/' . $lain->buku->cover) }}" alt="Cover" class="rounded me-3 border" style="width: 60px; height: 80px; object-fit: contain;">
+                                            @else
+                                                <div class="bg-secondary bg-opacity-25 rounded d-flex align-items-center justify-content-center me-3 text-muted small" style="width: 60px; height: 80px;">Cover</div>
+                                            @endif
+                                            <div>
+                                                <div class="fw-bold text-dark">{{ optional($lain->buku)->judul ?? 'Judul Tidak Tersedia' }}</div>
+                                                <div class="text-muted small">{{ optional($lain->buku)->pengarang ?? '-' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-semibold text-primary">{{ optional($lain->siswa)->nama_lengkap ?? 'Siswa' }}</span>
+                                    </td>
+                                    <td>{{ $lain->jumlah }} eks</td>
+                                    <td>{{ $lain->tanggal_peminjaman ? \Carbon\Carbon::parse($lain->tanggal_peminjaman)->format('d/m/Y') : '-' }}</td>
+                                    <td>{{ $lain->tanggal_pengembalian ? \Carbon\Carbon::parse($lain->tanggal_pengembalian)->format('d/m/Y') : '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
+
 </div>
 @endsection
